@@ -1,5 +1,6 @@
 from openerp import api
 from openerp.osv import osv, fields
+from openerp.tools.translate import _
 
 
 class product_production(osv.osv):
@@ -55,11 +56,16 @@ class product_production(osv.osv):
 	# OVERRIDES ----------------------------------------------------------------------------------------------------------------
 	
 	def action_confirm(self, cr, uid, ids, context=None):
-		# Todo
-		self.write(cr, uid, ids, {'state': 'confirmed'})
+		# Harus dicek dulu di stock location ybs apakah bahan mentah tersedia sesuai qty dan uom yang diminta
+		is_raw_product_available = True  # TODO
+		if is_raw_product_available:
+			self.write(cr, uid, ids, {'state': 'confirmed'})
+		else:
+			raise osv.except_orm(_('Confirm Failed'), _('There is not enough raw product available'))
 	
 	def action_finish(self, cr, uid, ids, context=None):
-		# Todo
+		# TODO create satu stock picking sampai state nya menjadi Transferred untuk seluruh bahan mentah, move dari location_id ke production_location_id
+		# TODO create satu stock picking sampai state nya menjadi Transferred untuk seluruh barang jadi, move dari production_location_id ke location_id
 		self.write(cr, uid, ids, {'state': 'finished'})
 
 
