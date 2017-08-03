@@ -1,0 +1,6 @@
+*.pyc
+.project
+.pydevproject
+.DS_Store
+hajj_attendance_server.iml
+.idea/

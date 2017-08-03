@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+
+		<record id="product_production_product_production_action" model="ir.actions.act_window">
+			<field name="name">Direct Production</field>
+			<field name="res_model">product.production</field>
+			<field name="view_type">form</field>
+			<field name="view_mode">tree,form</field>
+		</record>
+
+		<menuitem id="product_production_product_production_menu" parent="stock.menu_stock_warehouse_mgmt" sequence="2"
+				action="product_production_product_production_action"/>
+	</data>
+</openerp>
