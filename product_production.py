@@ -38,8 +38,8 @@ class product_production(osv.osv):
 		'production_location_id': fields.many2one('stock.location', 'Production Location', required=True,
 			ondelete='restrict',
 			domain=_domain_production_location_id),
-		'raw_product_line_ids': fields.one2many('product.production.raw', 'product_id', 'Raw Products'),
-		'finished_product_line_ids': fields.one2many('product.production.finished', 'product_id', 'Finished Products'),
+		'raw_product_line_ids': fields.one2many('product.production.raw', 'production_id', 'Raw Products'),
+		'finished_product_line_ids': fields.one2many('product.production.finished', 'production_id', 'Finished Products'),
 		'state': fields.selection([('draft', 'Draft'), ('confirmed', 'Confirmed'), ('finished', 'Finished')], 'State',
 			required=True, ondelete='restrict'),
 		'main_finished_product': fields.function(_get_main_finished_product, type='many2one', relation='product.product',
@@ -78,6 +78,7 @@ class product_production_raw(osv.osv):
 	# COLUMNS ------------------------------------------------------------------------------------------------------------------
 	
 	_columns = {
+		'production_id': fields.many2one('product.production', 'Production'),
 		'product_id': fields.many2one('product.product', 'Product', required=True, ondelete='restrict'),
 		'qty': fields.float('Qty.'),
 		'uom_id': fields.many2one('product.uom', 'UoM', required=True, ondelete='restrict'),
@@ -103,6 +104,7 @@ class product_production_finished(osv.osv):
 	# COLUMNS ------------------------------------------------------------------------------------------------------------------
 	
 	_columns = {
+		'production_id': fields.many2one('product.production', 'Production'),
 		'product_id': fields.many2one('product.product', 'Product', required=True, ondelete='restrict'),
 		'qty': fields.float('Qty.'),
 		'uom_id': fields.many2one('product.uom', 'UoM', required=True, ondelete='restrict'),
