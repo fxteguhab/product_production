@@ -85,7 +85,7 @@ class product_production_raw(osv.osv):
 	# ONCHANGES ----------------------------------------------------------------------------------------------------------------
 	
 	def onchange_product_id(self, cr, uid, ids, product_id, context=None):
-		res = {'value': {}}
+		res = {'value': {}, 'domain': {}}
 		if not product_id:
 			return res
 		product = self.pool.get('product.product').browse(cr, uid, [product_id], context=context)
@@ -112,7 +112,7 @@ class product_production_finished(osv.osv):
 	# ONCHANGES ----------------------------------------------------------------------------------------------------------------
 	
 	def onchange_product_id(self, cr, uid, ids, product_id, context=None):
-		res = {'value': {}}
+		res = {'value': {}, 'domain': {}}
 		if not product_id:
 			return res
 		product = self.pool.get('product.product').browse(cr, uid, [product_id], context=context)
