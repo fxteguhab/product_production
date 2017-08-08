@@ -90,6 +90,7 @@ class product_production_raw(osv.osv):
 			return res
 		product = self.pool.get('product.product').browse(cr, uid, [product_id], context=context)
 		res['value'].update({'uom_id': product.uom_id.id})
+		res['domain'].update({'uom_id': [('category_id', '=', product.uom_id.category_id.id)]})
 		return res
 
 
@@ -116,4 +117,5 @@ class product_production_finished(osv.osv):
 			return res
 		product = self.pool.get('product.product').browse(cr, uid, [product_id], context=context)
 		res['value'].update({'uom_id': product.uom_id.id})
+		res['domain'].update({'uom_id': [('category_id', '=', product.uom_id.category_id.id)]})
 		return res

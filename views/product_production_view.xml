@@ -69,8 +69,7 @@
 			<field name="model">product.production.finished</field>
 			<field name="arch" type="xml">
 				<tree string="Finished Product" version="7.0" editable="bottom">
-					<!--<field name="product_id"/>-->
-					<field name="finished_product_id" on_change="onchange_finished_product_id(finished_product_id)"/>
+					<field name="product_id" on_change="onchange_finished_product_id(finished_product_id)"/>
 					<field name="uom_id"/>
 					<field name="qty"/>
 				</tree>
@@ -82,8 +81,7 @@
 			<field name="model">product.production.raw</field>
 			<field name="arch" type="xml">
 				<tree string="Raw Product" version="7.0" editable="bottom">
-					<!--<field name="product_id"/>-->
-					<field name="raw_product_id" on_change="onchange_raw_product_id(raw_product_id)"/>
+					<field name="product_id" on_change="onchange_raw_product_id(raw_product_id)"/>
 					<field name="uom_id"/>
 					<field name="qty"/>
 				</tree>
