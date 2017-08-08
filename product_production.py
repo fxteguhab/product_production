@@ -62,8 +62,54 @@ class product_production(osv.osv):
 			raise osv.except_orm(_('Confirm Failed'), _('There is not enough raw product available'))
 	
 	def action_finish(self, cr, uid, ids, context=None):
-		# TODO create satu stock picking sampai state nya menjadi Transferred untuk seluruh bahan mentah, move dari location_id ke production_location_id
-		# TODO create satu stock picking sampai state nya menjadi Transferred untuk seluruh barang jadi, move dari production_location_id ke location_id
+		picking_obj = self.pool.get('stock.picking')
+		model_obj = self.pool.get('ir.model.data')
+		internal_picking = model_obj.get_object_reference(cr, uid, 'stock', 'picking_type_internal')[1]
+		
+		productions = self.browse(cr, uid, ids, context)
+		for production in productions:
+			# Create satu stock picking sampai state nya menjadi Transferred untuk seluruh bahan mentah,
+			# move dari location_id ke production_location_id
+			move_lines = []
+			for raw_products in production.raw_product_line_ids:
+				move_lines.append((0, False, {
+					'product_id': raw_products.product_id.id,
+					'product_uom_qty': raw_products.qty,
+					'product_uom': raw_products.uom_id.id,
+					'location_id': production.location_id.id,
+					'location_dest_id': production.production_location_id.id,
+					'name': raw_products.product_id.name
+				}))
+			vals = {
+				'picking_type_id': internal_picking,
+				'move_lines': move_lines,
+			}
+			picking_raw_id = picking_obj.create(cr, uid, vals, context)
+			picking_raw = picking_obj.browse(cr, uid, [picking_raw_id], context)
+			picking_raw.action_confirm()
+			picking_raw.force_assign()
+			picking_raw.do_transfer()
+			# Create satu stock picking sampai state nya menjadi Transferred untuk seluruh barang jadi, move dari
+			# production_location_id ke location_id
+			move_lines = []
+			for finished_products in production.finished_product_line_ids:
+				move_lines.append((0, False, {
+					'product_id': finished_products.product_id.id,
+					'product_uom_qty': finished_products.qty,
+					'product_uom': finished_products.uom_id.id,
+					'location_id': production.location_id.id,
+					'location_dest_id': production.production_location_id.id,
+					'name': finished_products.product_id.name
+				}))
+			vals = {
+				'picking_type_id': internal_picking,
+				'move_lines': move_lines,
+			}
+			picking_finished_id = picking_obj.create(cr, uid, vals, context)
+			picking_finished = picking_obj.browse(cr, uid, [picking_finished_id], context)
+			picking_finished.action_confirm()
+			picking_finished.force_assign()
+			picking_finished.do_transfer()
 		return self.write(cr, uid, ids, {'state': 'finished'})
 
 
