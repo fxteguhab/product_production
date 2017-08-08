@@ -9,15 +9,13 @@ class product_production(osv.osv):
 	
 	# COLUMNS ------------------------------------------------------------------------------------------------------------------
 	
-	# def _total_sheets(self, cr, uid, ids, field_name, arg, context=None):
-	#     result = dict.fromkeys(ids, 0)
-	#     for bon in self.browse(cr, uid, ids):
-	#         result[bon.id] = bon.end_at - bon.start_from + 1
-	#     return result
 	def _get_main_finished_product(self, cr, uid, ids, field_name, arg, context=None):
 		result = {}
-		# for rec in self.browse(cr, uid, ids, context=context):
-		# 	result[rec.id] = (rec.company_id.currency_id.id, rec.company_id.currency_id.symbol)
+		for production in self.browse(cr, uid, ids, context):
+			if len(production.finished_product_line_ids) > 0:
+				result[production.id] = production.finished_product_line_ids[0].product_id.id
+			else:
+				result[production.id] = 0
 		return result
 	
 	@api.model
@@ -43,7 +41,7 @@ class product_production(osv.osv):
 		'state': fields.selection([('draft', 'Draft'), ('confirmed', 'Confirmed'), ('finished', 'Finished')], 'State',
 			required=True, ondelete='restrict'),
 		'main_finished_product': fields.function(_get_main_finished_product, type='many2one', relation='product.product',
-			store=True, string='Main Finished Product', required=True, ondelete='restrict'),
+			store=True, string='Main Finished Product', ondelete='restrict'),
 		'notes': fields.text('Notes'),
 	}
 	
@@ -59,14 +57,14 @@ class product_production(osv.osv):
 		# Harus dicek dulu di stock location ybs apakah bahan mentah tersedia sesuai qty dan uom yang diminta
 		is_raw_product_available = True  # TODO
 		if is_raw_product_available:
-			self.write(cr, uid, ids, {'state': 'confirmed'})
+			return self.write(cr, uid, ids, {'state': 'confirmed'})
 		else:
 			raise osv.except_orm(_('Confirm Failed'), _('There is not enough raw product available'))
 	
 	def action_finish(self, cr, uid, ids, context=None):
 		# TODO create satu stock picking sampai state nya menjadi Transferred untuk seluruh bahan mentah, move dari location_id ke production_location_id
 		# TODO create satu stock picking sampai state nya menjadi Transferred untuk seluruh barang jadi, move dari production_location_id ke location_id
-		self.write(cr, uid, ids, {'state': 'finished'})
+		return self.write(cr, uid, ids, {'state': 'finished'})
 
 
 # ==========================================================================================================================
