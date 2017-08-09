@@ -1,6 +1,7 @@
 from openerp import api
 from openerp.osv import osv, fields
 from openerp.tools.translate import _
+from datetime import datetime, date, timedelta
 
 
 class product_production(osv.osv):
@@ -29,6 +30,11 @@ class product_production(osv.osv):
 		result.append(('id', 'in', virtual_location_child_ids))
 		return result
 	
+	def _default_location_id(self, cr, uid, context={}):
+		# default location adalah gudang tempat user sekarang ditugaskan
+		user_data = self.pool['res.users'].browse(cr, uid, uid)
+		return user_data.branch_id.default_incoming_location_id.id or None
+	
 	_columns = {
 		'create_date': fields.datetime('Production Date'),
 		'employee_id': fields.many2one('hr.employee', 'Employee', required=True, ondelete='restrict'),
@@ -46,9 +52,11 @@ class product_production(osv.osv):
 	}
 	
 	_defaults = {
+		'create_date': lambda *a: datetime.today().strftime('%Y-%m-%d %H:%M:%S'),
 		'production_location_id': lambda self, cr, uid, *args: self.pool.get('ir.model.data').get_object_reference(cr, uid,
 			'product_production', 'stock_location_virtual_direct_production')[1],
 		'state': 'draft',
+		'location_id': _default_location_id,
 	}
 	
 	# OVERRIDES ----------------------------------------------------------------------------------------------------------------
