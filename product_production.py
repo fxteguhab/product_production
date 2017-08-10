@@ -53,9 +53,31 @@ class product_production(osv.osv):
 	
 	# OVERRIDES ----------------------------------------------------------------------------------------------------------------
 	
+	def _get_product_qty(self, cr, uid, location_id=False, product_id=False, uom_id=False, context=None):
+		if product_id and location_id:
+			quant_obj = self.pool.get("stock.quant")
+			uom_obj = self.pool.get("product.uom")
+			product_obj = self.pool.get('product.product')
+			users_obj = self.pool.get('res.users')
+			
+			product = product_obj.browse(cr, uid, product_id, context=context)
+			company_id = users_obj.browse(cr, uid, uid, context=context).company_id.id
+			dom = [('company_id', '=', company_id), ('location_id', '=', location_id), ('product_id','=', product_id)]
+			quants = quant_obj.search(cr, uid, dom, context=context)
+			th_qty = sum([x.qty for x in quant_obj.browse(cr, uid, quants, context=context)])
+			if product_id and uom_id and product.uom_id.id != uom_id:
+				th_qty = uom_obj._compute_qty(cr, uid, product.uom_id.id, th_qty, uom_id)
+			return th_qty
+	
 	def action_confirm(self, cr, uid, ids, context=None):
-		# Harus dicek dulu di stock location ybs apakah bahan mentah tersedia sesuai qty dan uom yang diminta
-		is_raw_product_available = True  # TODO
+		# cek di stock location ybs apakah bahan mentah tersedia sesuai qty dan uom yang diminta
+		is_raw_product_available = True
+		for production in self.browse(cr, uid, ids):
+			for line in production.raw_product_line_ids:
+				th_qty = self._get_product_qty(cr, uid, production.location_id.id, line.product_id.id, line.uom_id.id)
+				if line.qty > th_qty:
+					is_raw_product_available = False
+					break
 		if is_raw_product_available:
 			return self.write(cr, uid, ids, {'state': 'confirmed'})
 		else:
