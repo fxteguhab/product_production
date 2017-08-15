@@ -12,21 +12,21 @@
 						<field name="state" widget="statusbar"/>
 					</header>
 					<group>
-						<field name="create_date"/>
-						<field name="employee_id"/>
-						<field name="location_id"/>
-						<field name="production_location_id"/>
-						<field name="main_finished_product"/>
+						<field name="create_date" attrs="{'readonly': [('state', 'in', ['confirmed','finished'])]}"/>
+						<field name="employee_id" attrs="{'readonly': [('state', 'in', ['confirmed','finished'])]}"/>
+						<field name="location_id" attrs="{'readonly': [('state', 'in', ['confirmed','finished'])]}"/>
+						<field name="production_location_id" attrs="{'readonly': [('state', 'in', ['confirmed','finished'])]}"/>
+						<field name="main_finished_product" attrs="{'readonly': [('state', 'in', ['confirmed','finished'])]}"/>
 					</group>
 					<notebook>
 						<page string="Raw Products">
-							<field name="raw_product_line_ids"/>
+							<field name="raw_product_line_ids" attrs="{'readonly': [('state', 'in', ['confirmed','finished'])]}"/>
 						</page>
 						<page string="Finished Products">
-							<field name="finished_product_line_ids"/>
+							<field name="finished_product_line_ids" attrs="{'readonly': [('state', 'in', ['confirmed','finished'])]}"/>
 						</page>
 						<page string="Notes">
-							<field name="notes"/>
+							<field name="notes" attrs="{'readonly': [('state', 'in', ['confirmed','finished'])]}"/>
 						</page>
 					</notebook>
 				</form>
