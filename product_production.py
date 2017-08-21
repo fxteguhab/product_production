@@ -127,8 +127,8 @@ class product_production(osv.osv):
 					'product_id': finished_products.product_id.id,
 					'product_uom_qty': finished_products.qty,
 					'product_uom': finished_products.uom_id.id,
-					'location_id': production.location_id.id,
-					'location_dest_id': production.production_location_id.id,
+					'location_id': production.production_location_id.id,
+					'location_dest_id': production.location_id.id,	
 					'name': finished_products.product_id.name
 				}))
 			vals = {
