@@ -158,6 +158,10 @@ class product_production_raw(osv.osv):
 		'uom_id': fields.many2one('product.uom', 'UoM', required=True, ondelete='restrict'),
 	}
 	
+	_defaults = {
+		'qty' : 1
+	}
+	
 	# ONCHANGES ----------------------------------------------------------------------------------------------------------------
 	
 	def onchange_product_id(self, cr, uid, ids, product_id, context=None):
@@ -183,6 +187,10 @@ class product_production_finished(osv.osv):
 		'product_id': fields.many2one('product.product', 'Product', required=True, ondelete='restrict'),
 		'qty': fields.float('Qty.'),
 		'uom_id': fields.many2one('product.uom', 'UoM', required=True, ondelete='restrict'),
+	}
+	
+	_defaults = {
+		'qty' : 1
 	}
 	
 	# ONCHANGES ----------------------------------------------------------------------------------------------------------------
